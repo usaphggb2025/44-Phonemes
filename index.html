@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>44 Phonemes of English</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const PhonemeApp = () => {
+          const [selectedCategory, setSelectedCategory] = useState('all');
+          const [searchTerm, setSearchTerm] = useState('');
+          const [selectedPhoneme, setSelectedPhoneme] = useState(null);
+
+          const phonemes = [
+            // Consonants
+            { symbol: 'p', example: 'pat', category: 'consonant', type: 'stop', description: 'Voiceless bilabial stop' },
+            { symbol: 'b', example: 'bat', category: 'consonant', type: 'stop', description: 'Voiced bilabial stop' },
+            { symbol: 't', example: 'tap', category: 'consonant', type: 'stop', description: 'Voiceless alveolar stop' },
+            { symbol: 'd', example: 'dog', category: 'consonant', type: 'stop', description: 'Voiced alveolar stop' },
+            { symbol: 'k', example: 'cat', category: 'consonant', type: 'stop', description: 'Voiceless velar stop' },
+            { symbol: 'g', example: 'got', category: 'consonant', type: 'stop', description: 'Voiced velar stop' },
+            { symbol: 'f', example: 'fat', category: 'consonant', type: 'fricative', description: 'Voiceless labiodental fricative' },
+            { symbol: 'v', example: 'vat', category: 'consonant', type: 'fricative', description: 'Voiced labiodental fricative' },
+            { symbol: 'θ', example: 'thin', category: 'consonant', type: 'fricative', description: 'Voiceless dental fricative' },
+            { symbol: 'ð', example: 'this', category: 'consonant', type: 'fricative', description: 'Voiced dental fricative' },
+            { symbol: 's', example: 'sat', category: 'consonant', type: 'fricative', description: 'Voiceless alveolar fricative' },
+            { symbol: 'z', example: 'zip', category: 'consonant', type: 'fricative', description: 'Voiced alveolar fricative' },
+            { symbol: 'ʃ', example: 'ship', category: 'consonant', type: 'fricative', description: 'Voiceless postalveolar fricative' },
+            { symbol: 'ʒ', example: 'measure', category: 'consonant', type: 'fricative', description: 'Voiced postalveolar fricative' },
+            { symbol: 'h', example: 'hat', category: 'consonant', type: 'fricative', description: 'Voiceless glottal fricative' },
+            { symbol: 'tʃ', example: 'chip', category: 'consonant', type: 'affricate', description: 'Voiceless postalveolar affricate' },
+            { symbol: 'dʒ', example: 'judge', category: 'consonant', type: 'affricate', description: 'Voiced postalveolar affricate' },
+            { symbol: 'm', example: 'mat', category: 'consonant', type: 'nasal', description: 'Bilabial nasal' },
+            { symbol: 'n', example: 'not', category: 'consonant', type: 'nasal', description: 'Alveolar nasal' },
+            { symbol: 'ŋ', example: 'sing', category: 'consonant', type: 'nasal', description: 'Velar nasal' },
+            { symbol: 'l', example: 'let', category: 'consonant', type: 'liquid', description: 'Alveolar lateral approximant' },
+            { symbol: 'r', example: 'red', category: 'consonant', type: 'liquid', description: 'Alveolar approximant' },
+            { symbol: 'j', example: 'yes', category: 'consonant', type: 'glide', description: 'Palatal approximant' },
+            { symbol: 'w', example: 'wet', category: 'consonant', type: 'glide', description: 'Labio-velar approximant' },
+            
+            // Short Vowels
+            { symbol: 'ɪ', example: 'sit', category: 'vowel', type: 'short', description: 'Near-close front unrounded vowel' },
+            { symbol: 'e', example: 'bed', category: 'vowel', type: 'short', description: 'Open-mid front unrounded vowel' },
+            { symbol: 'æ', example: 'cat', category: 'vowel', type: 'short', description: 'Near-open front unrounded vowel' },
+            { symbol: 'ʌ', example: 'cup', category: 'vowel', type: 'short', description: 'Open-mid back unrounded vowel' },
+            { symbol: 'ʊ', example: 'book', category: 'vowel', type: 'short', description: 'Near-close back rounded vowel' },
+            { symbol: 'ɒ', example: 'hot', category: 'vowel', type: 'short', description: 'Open back rounded vowel' },
+            { symbol: 'ə', example: 'about', category: 'vowel', type: 'short', description: 'Mid central vowel (schwa)' },
+            
+            // Long Vowels
+            { symbol: 'iː', example: 'see', category: 'vowel', type: 'long', description: 'Close front unrounded vowel' },
+            { symbol: 'uː', example: 'too', category: 'vowel', type: 'long', description: 'Close back rounded vowel' },
+            { symbol: 'ɑː', example: 'car', category: 'vowel', type: 'long', description: 'Open back unrounded vowel' },
+            { symbol: 'ɔː', example: 'saw', category: 'vowel', type: 'long', description: 'Open-mid back rounded vowel' },
+            { symbol: 'ɜː', example: 'bird', category: 'vowel', type: 'long', description: 'Open-mid central unrounded vowel' },
+            
+            // Diphthongs
+            { symbol: 'eɪ', example: 'say', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'aɪ', example: 'my', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'ɔɪ', example: 'boy', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'aʊ', example: 'how', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'əʊ', example: 'go', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'ɪə', example: 'near', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'eə', example: 'hair', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+            { symbol: 'ʊə', example: 'pure', category: 'vowel', type: 'diphthong', description: 'Diphthong' },
+          ];
+
+          const categories = [
+            { id: 'all', name: 'All Phonemes', count: 44 },
+            { id: 'consonant', name: 'Consonants', count: 24 },
+            { id: 'vowel', name: 'Vowels', count: 20 },
+          ];
+
+          const filteredPhonemes = phonemes.filter(p => {
+            const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+            const matchesSearch = p.example.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 p.symbol.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesCategory && matchesSearch;
+          });
+
+          const playSound = (phoneme) => {
+            const utterance = new SpeechSynthesisUtterance(phoneme.example);
+            utterance.rate = 0.7;
+            speechSynthesis.speak(utterance);
+          };
+
+          const VolumeIcon = () => (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          );
+
+          const BookIcon = () => (
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          );
+
+          const SearchIcon = () => (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          );
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+              <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="text-indigo-600"><BookIcon /></div>
+                    <h1 className="text-3xl font-bold text-gray-800">44 Phonemes of English</h1>
+                  </div>
+                  <p className="text-gray-600">Interactive guide to English pronunciation sounds</p>
+                </div>
+
+                {/* Search and Filter */}
+                <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative">
+                      <div className="absolute left-3 top-3 text-gray-400"><SearchIcon /></div>
+                      <input
+                        type="text"
+                        placeholder="Search by example word or symbol..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      {categories.map(cat => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setSelectedCategory(cat.id)}
+                          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                            selectedCategory === cat.id
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {cat.name} ({cat.count})
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Phoneme Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {filteredPhonemes.map((phoneme, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => setSelectedPhoneme(phoneme)}
+                      className={`bg-white rounded-lg shadow-md p-4 cursor-pointer transition-all hover:shadow-xl hover:scale-105 ${
+                        phoneme.category === 'consonant' ? 'border-l-4 border-blue-500' : 'border-l-4 border-pink-500'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-gray-800 mb-2">
+                          {phoneme.symbol}
+                        </div>
+                        <div className="text-sm text-gray-600 mb-2">
+                          /{phoneme.symbol}/
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            playSound(phoneme);
+                          }}
+                          className="w-full flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-2 px-3 rounded-lg transition-colors"
+                        >
+                          <VolumeIcon />
+                          <span className="font-medium">{phoneme.example}</span>
+                        </button>
+                        <div className="mt-2 text-xs text-gray-500 capitalize">
+                          {phoneme.type}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Detail Modal */}
+                {selectedPhoneme && (
+                  <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                    onClick={() => setSelectedPhoneme(null)}
+                  >
+                    <div 
+                      className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="text-center">
+                        <div className="text-6xl font-bold text-gray-800 mb-4">
+                          {selectedPhoneme.symbol}
+                        </div>
+                        <div className="text-xl text-gray-600 mb-4">
+                          /{selectedPhoneme.symbol}/
+                        </div>
+                        <button
+                          onClick={() => playSound(selectedPhoneme)}
+                          className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-colors mb-4"
+                        >
+                          <VolumeIcon />
+                          <span className="text-lg font-medium">{selectedPhoneme.example}</span>
+                        </button>
+                        <div className="text-left space-y-2 bg-gray-50 p-4 rounded-lg">
+                          <div>
+                            <span className="font-semibold text-gray-700">Category: </span>
+                            <span className="text-gray-600 capitalize">{selectedPhoneme.category}</span>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-gray-700">Type: </span>
+                            <span className="text-gray-600 capitalize">{selectedPhoneme.type}</span>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-gray-700">Description: </span>
+                            <span className="text-gray-600">{selectedPhoneme.description}</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setSelectedPhoneme(null)}
+                          className="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition-colors"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Summary Stats */}
+                <div className="mt-6 bg-white rounded-lg shadow-lg p-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-indigo-600">44</div>
+                      <div className="text-sm text-gray-600">Total Phonemes</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-blue-600">24</div>
+                      <div className="text-sm text-gray-600">Consonants</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-pink-600">20</div>
+                      <div className="text-sm text-gray-600">Vowels</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-purple-600">{filteredPhonemes.length}</div>
+                      <div className="text-sm text-gray-600">Displayed</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<PhonemeApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
